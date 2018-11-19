@@ -1,0 +1,89 @@
+{
+    "inbounds": [
+        {
+            "port": 1080, // SOCKS 代理端口，在浏览器中需配置代理并指向这个端口
+            "listen": "127.0.0.1",
+            "protocol": "http",
+            "domainOverride": [
+                "tls",
+                "http"
+            ],
+            "settings": {
+                "timeout": 0
+            }
+            // "protocol": "socks",
+            // "settings": {
+            //     "udp": true,
+            //     "auth":"noauth"
+            // }
+        }
+    ],
+    "outbounds": [
+        {
+            "protocol": "vmess",
+            "settings": {
+                "vnext": [
+                    {
+                        "address": "omoeya.com", // 服务器地址，请修改为你自己的服务器 ip 或域名
+                        "port": 443, // 服务器端口
+                        "users": [
+                            {
+                                "id": "b831381d-6324-4d53-ad4f-8cda48b30811",
+                                "alterId": 64,
+                                "security": "aes-128-gcm"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "streamSettings": {
+                // "network": "mkcp",
+                // "kcpSettings": {
+                //     "uplinkCapacity": 5,
+                //     "downlinkCapacity": 100,
+                //     "congestion": true,
+                //     "header": {
+                //         "type": "none"
+                //     }
+                // } 
+                // "network": "h2",
+                // "httpSettings": { //此项是关于 HTTP/2 的设置
+                //     "path": "/ray"
+                // },
+                "network": "tcp",
+                "security": "tls"
+            },
+            "mux": {
+                "enabled": true
+            }
+        },
+        {
+            "protocol": "freedom",
+            "tag": "direct",
+            "settings": {}
+        }
+    ],
+    "routing": {
+        "strategy": "rules",
+        "settings": {
+            "domainStrategy": "IPOnDemand",
+            "rules": [
+                {
+                    "type": "chinaip",
+                    "ip": [
+                        "geoip:private",
+                        "geosite:cn"
+                    ],
+                    "outboundTag": "direct"
+                },
+                {
+                    "type": "field",
+                    "outboundTag": "direct",
+                    "domain": [
+                        "geosite:cn"
+                    ]
+                }
+            ]
+        }
+    }
+}
